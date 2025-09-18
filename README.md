@@ -335,29 +335,5 @@ The application comes with sample data including:
 - Place customer orders
 - View basic dashboard information
 
-## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-If you encounter any issues:
-
-1. Check that all services are running: `docker-compose ps`
-2. View logs: `docker-compose logs [service-name]`
-3. Ensure ports 3000, 5000, and 5432 are available
-4. Verify environment variables are set correctly
-
-For more help, please open an issue in the repository.
-
----
-
-**Sweet Shop Management System** - Built with ❤️ using modern web technologies.
