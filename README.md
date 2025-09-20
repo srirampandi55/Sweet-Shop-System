@@ -86,26 +86,21 @@ A comprehensive full-stack application for managing a sweet shop with inventory 
    npm install
    ```
 
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database credentials
-   ```
 
-4. **Set up PostgreSQL database**
+3. **Set up PostgreSQL database**
    ```bash
    # Install PostgreSQL and create database
    createdb sweetshop_db
    ```
 
-5. **Run Prisma migrations**
+4. **Run Prisma migrations**
    ```bash
    npm run db:migrate
    npm run db:generate
    npm run db:seed
    ```
 
-6. **Start the backend server**
+5. **Start the backend server**
    ```bash
    npm run dev
    ```
@@ -121,13 +116,8 @@ A comprehensive full-stack application for managing a sweet shop with inventory 
    npm install
    ```
 
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env if needed (default API URL is http://localhost:5000/api)
-   ```
 
-4. **Start the frontend development server**
+3. **Start the frontend development server**
    ```bash
    npm run dev
    ```
