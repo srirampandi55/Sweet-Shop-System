@@ -3,15 +3,25 @@ import { sweetsAPI } from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { Sweet } from '../types';
 import toast from 'react-hot-toast';
-import { Plus, Minus, ShoppingCart, Search, Star, Heart, Filter } from 'lucide-react';
+import { Plus, Minus, ShoppingCart, Search, Filter, X } from 'lucide-react';
 
 const Sweets: React.FC = () => {
   const [sweets, setSweets] = useState<Sweet[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
-  const [viewMode, setViewMode] = useState('grid');
+  const [selectedSweet, setSelectedSweet] = useState<Sweet | null>(null);
   const { addToCart } = useCart();
+
+  // Placeholder images
+  const placeholderImages = [
+    'https://source.unsplash.com/400x400/?candy',
+    'https://source.unsplash.com/400x400/?sweet',
+    'https://source.unsplash.com/400x400/?dessert',
+    'https://source.unsplash.com/400x400/?cake',
+    'https://source.unsplash.com/400x400/?cupcake',
+    'https://source.unsplash.com/400x400/?pastry',
+  ];
 
   useEffect(() => {
     loadSweets();
@@ -36,11 +46,7 @@ const Sweets: React.FC = () => {
     addToCart(sweet, quantity);
     toast.success(`Added ${sweet.name} to cart`, {
       icon: '🛒',
-      style: {
-        borderRadius: '12px',
-        background: '#10b981',
-        color: '#fff',
-      },
+      style: { borderRadius: '12px', background: '#10b981', color: '#fff' },
     });
   };
 
@@ -60,275 +66,203 @@ const Sweets: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-96">
-        <div className="relative">
-          <div className="w-24 h-24 border-4 border-pink-200 rounded-full animate-spin"></div>
-          <div className="w-24 h-24 border-4 border-pink-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-3xl">🍭</span>
-          </div>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-24 w-24 border-b-4 border-pink-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-pink-200">
-              🍬 Sweet Paradise 🍭
-            </h1>
-            <p className="text-xl md:text-2xl opacity-90 mb-8 max-w-2xl mx-auto">
-              Discover our premium collection of handcrafted sweets made with love and tradition
-            </p>
-            
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto relative">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search for your favorite sweets..."
-                  className="w-full pl-12 pr-4 py-4 text-gray-700 bg-white/90 backdrop-blur-sm rounded-full border-0 focus:ring-4 focus:ring-white/30 focus:bg-white transition-all duration-300 text-lg shadow-xl"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      {/* Header */}
+      <div className="max-w-7xl mx-auto px-4 py-8 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold mb-2 text-pink-600 dark:text-pink-400">
+          🍬 Sweet Paradise
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
+          Discover premium handcrafted sweets made with love
+        </p>
+
+        {/* Search */}
+        <div className="max-w-md mx-auto relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Search sweets..."
+            className="w-full pl-10 pr-4 py-3 rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:outline-none transition"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-10 left-10 text-6xl opacity-20 animate-bounce">🧁</div>
-        <div className="absolute top-20 right-20 text-4xl opacity-30 animate-pulse">🍰</div>
-        <div className="absolute bottom-10 left-1/4 text-5xl opacity-25 animate-bounce delay-300">🍪</div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Filter and Sort Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-600" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white border-2 border-purple-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-              >
-                <option value="name">Sort by Name</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="stock">Stock Level</option>
-              </select>
-            </div>
-          </div>
-          
-          <div className="text-sm text-gray-600 bg-white px-4 py-2 rounded-full border border-gray-200">
-            {filteredAndSortedSweets.length} sweets available
-          </div>
+      {/* Filter & Sort */}
+      <div className="max-w-7xl mx-auto px-4 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="flex items-center gap-2">
+          <Filter className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 transition"
+          >
+            <option value="name">Sort by Name</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="stock">Stock Level</option>
+          </select>
         </div>
+        <div className="text-sm text-gray-600 dark:text-gray-300">
+          {filteredAndSortedSweets.length} sweets available
+        </div>
+      </div>
 
-        {filteredAndSortedSweets.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-8xl mb-6">🔍</div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">No sweets found</h3>
-            <p className="text-gray-600 mb-8">Try adjusting your search or filters</p>
+      {/* Sweets Grid */}
+      {filteredAndSortedSweets.length === 0 ? (
+        <div className="text-center py-20">
+          <div className="text-8xl mb-4">🔍</div>
+          <h3 className="text-2xl font-bold mb-2">No sweets found</h3>
+          <button
+            onClick={() => setSearchTerm('')}
+            className="bg-pink-500 dark:bg-pink-400 text-white px-6 py-3 rounded-full hover:bg-pink-600 dark:hover:bg-pink-500 transition"
+          >
+            Show All
+          </button>
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredAndSortedSweets.map((sweet, index) => (
+            <SweetCard
+              key={sweet.id}
+              sweet={sweet}
+              index={index}
+              onSelect={() => setSelectedSweet(sweet)}
+              placeholderImage={placeholderImages[index % placeholderImages.length]}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Sweet Details Modal */}
+      {selectedSweet && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl max-w-lg w-full overflow-hidden relative">
             <button
-              onClick={() => setSearchTerm('')}
-              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105"
+              onClick={() => setSelectedSweet(null)}
+              className="absolute top-4 right-4 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
             >
-              Show All Sweets
+              <X className="w-6 h-6" />
             </button>
+
+            <img
+              src={selectedSweet.imageUrl || placeholderImages[0]}
+              alt={selectedSweet.name}
+              className="w-full h-64 object-cover"
+            />
+
+            <div className="p-6 space-y-4">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{selectedSweet.name}</h2>
+              {selectedSweet.description && (
+                <p className="text-gray-700 dark:text-gray-300">{selectedSweet.description}</p>
+              )}
+
+              <div className="flex justify-between items-center">
+                <span className="text-xl font-bold text-pink-600 dark:text-pink-400">₹{selectedSweet.price}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-300">
+                  {selectedSweet.stock} left
+                </span>
+              </div>
+
+              {/* Quantity and Add to Cart */}
+              {selectedSweet.stock > 0 ? <QuantityAddToCart sweet={selectedSweet} onAddToCart={handleAddToCart} /> : (
+                <button disabled className="w-full bg-gray-300 dark:bg-gray-700 text-gray-500 py-3 rounded-2xl">
+                  Out of Stock
+                </button>
+              )}
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredAndSortedSweets.map((sweet, index) => (
-              <SweetCard
-                key={sweet.id}
-                sweet={sweet}
-                onAddToCart={handleAddToCart}
-                index={index}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
 
 interface SweetCardProps {
   sweet: Sweet;
-  onAddToCart: (sweet: Sweet, quantity: number) => void;
   index: number;
+  placeholderImage: string;
+  onSelect: () => void;
 }
 
-const SweetCard: React.FC<SweetCardProps> = ({ sweet, onAddToCart, index }) => {
-  const [quantity, setQuantity] = useState(1);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  const handleQuantityChange = (delta: number) => {
-    const newQuantity = quantity + delta;
-    if (newQuantity >= 1 && newQuantity <= sweet.stock) {
-      setQuantity(newQuantity);
-    }
-  };
-
+const SweetCard: React.FC<SweetCardProps> = ({ sweet, onSelect, placeholderImage }) => {
   const isOutOfStock = sweet.stock === 0;
-  const isLowStock = sweet.stock <= 5 && sweet.stock > 0;
-
-  // Sweet emojis for variety
-  const sweetEmojis = ['🍬', '🍭', '🧁', '🍰', '🍪', '🎂', '🍩', '🥧'];
-  const sweetEmoji = sweetEmojis[index % sweetEmojis.length];
+  const isLowStock = sweet.stock > 0 && sweet.stock <= 5;
 
   return (
-    <div 
-      className={`group relative bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:rotate-1 ${
-        isOutOfStock ? 'opacity-75' : ''
-      }`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        animationDelay: `${index * 100}ms`,
-        animation: 'fadeInUp 0.6s ease-out forwards'
-      }}
+    <div
+      className={`cursor-pointer bg-white dark:bg-gray-800 rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-transform transform hover:-translate-y-2`}
+      onClick={onSelect}
     >
-      {/* Favorite Button */}
-      <button
-        onClick={() => setIsFavorite(!isFavorite)}
-        className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-200 group/fav"
-      >
-        <Heart 
-          className={`w-5 h-5 transition-all duration-200 group-hover/fav:scale-110 ${
-            isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'
-          }`} 
+      <div className="h-64 w-full overflow-hidden relative">
+        <img
+          src={sweet.imageUrl || placeholderImage}
+          alt={sweet.name}
+          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
         />
-      </button>
-
-      {/* Status Badge */}
-      {isOutOfStock && (
-        <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg">
-          Out of Stock
-        </div>
-      )}
-      {isLowStock && !isOutOfStock && (
-        <div className="absolute top-4 left-4 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 shadow-lg animate-pulse">
-          Low Stock
-        </div>
-      )}
-
-      {/* Sweet Image/Icon */}
-      <div className="relative h-48 bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 rounded-t-3xl flex items-center justify-center overflow-hidden">
-        <div 
-          className={`text-8xl transition-all duration-500 transform ${
-            isHovered ? 'scale-110 rotate-12' : 'scale-100'
-          }`}
-        >
-          {sweetEmoji}
-        </div>
-        
-        {/* Shine Effect */}
-        <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 -skew-x-12 transition-all duration-700 ${
-          isHovered ? 'opacity-30 translate-x-full' : '-translate-x-full'
-        }`}></div>
-      </div>
-
-      <div className="p-6 space-y-4">
-        {/* Sweet Info */}
-        <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors duration-200">
-            {sweet.name}
-          </h3>
-          {sweet.description && (
-            <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
-              {sweet.description}
-            </p>
-          )}
-        </div>
-
-        {/* Price and Stock */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-              ₹{sweet.price}
-            </span>
-            <span className="text-sm text-gray-500">per piece</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${
-              sweet.stock > 10 ? 'bg-green-500' : sweet.stock > 0 ? 'bg-yellow-500' : 'bg-red-500'
-            }`}></div>
-            <span className="text-sm font-medium text-gray-600">
-              {sweet.stock} left
-            </span>
-          </div>
-        </div>
-
-        {/* Quantity and Add to Cart */}
-        {!isOutOfStock && (
-          <div className="space-y-4">
-            {/* Quantity Selector */}
-            <div className="flex items-center justify-center">
-              <div className="flex items-center bg-gray-100 rounded-full p-1">
-                <button
-                  onClick={() => handleQuantityChange(-1)}
-                  disabled={quantity <= 1}
-                  className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all duration-200"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-16 text-center font-bold text-lg text-gray-800">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => handleQuantityChange(1)}
-                  disabled={quantity >= sweet.stock}
-                  className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-all duration-200"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Add to Cart Button */}
-            <button
-              onClick={() => onAddToCart(sweet, quantity)}
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Add to Cart
-            </button>
-          </div>
-        )}
-
-        {/* Out of Stock Button */}
         {isOutOfStock && (
-          <button 
-            disabled 
-            className="w-full bg-gray-300 text-gray-500 font-bold py-4 rounded-2xl cursor-not-allowed"
-          >
+          <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
             Out of Stock
-          </button>
+          </span>
         )}
+        {isLowStock && !isOutOfStock && (
+          <span className="absolute top-3 left-3 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+            Low Stock
+          </span>
+        )}
+      </div>
 
-        {/* Rating Stars (Decorative) */}
-        <div className="flex items-center justify-center gap-1 pt-2">
-          {[...Array(5)].map((_, i) => (
-            <Star 
-              key={i} 
-              className={`w-4 h-4 ${
-                i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
-              }`} 
-            />
-          ))}
-          <span className="text-xs text-gray-500 ml-1">(4.0)</span>
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{sweet.name}</h3>
+        {sweet.description && (
+          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{sweet.description}</p>
+        )}
+        <div className="flex justify-between items-center mt-2">
+          <span className="text-xl font-bold text-pink-600 dark:text-pink-400">₹{sweet.price}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-300">{sweet.stock} left</span>
         </div>
       </div>
+    </div>
+  );
+};
+
+interface QuantityAddToCartProps {
+  sweet: Sweet;
+  onAddToCart: (sweet: Sweet, quantity: number) => void;
+}
+
+const QuantityAddToCart: React.FC<QuantityAddToCartProps> = ({ sweet, onAddToCart }) => {
+  const [quantity, setQuantity] = useState(1);
+
+  return (
+    <div className="flex gap-2 items-center mt-3">
+      <button
+        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+        className="bg-gray-200 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+      >
+        <Minus className="h-4 w-4 text-gray-700 dark:text-gray-200" />
+      </button>
+      <span className="w-8 text-center">{quantity}</span>
+      <button
+        onClick={() => setQuantity(Math.min(sweet.stock, quantity + 1))}
+        className="bg-gray-200 dark:bg-gray-700 p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+      >
+        <Plus className="h-4 w-4 text-gray-700 dark:text-gray-200" />
+      </button>
+      <button
+        onClick={() => onAddToCart(sweet, quantity)}
+        className="bg-gradient-to-r from-pink-500 to-purple-500 dark:from-pink-400 dark:to-purple-400 text-white px-4 py-2 rounded-2xl font-semibold hover:from-pink-600 hover:to-purple-600 dark:hover:from-pink-500 dark:hover:to-purple-500 transition"
+      >
+        <ShoppingCart className="w-4 h-4 inline-block mr-1" /> Add
+      </button>
     </div>
   );
 };
